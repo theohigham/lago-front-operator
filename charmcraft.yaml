@@ -1,0 +1,88 @@
+name: lago-front-k8s
+type: charm
+title: Lago Frontend
+summary: A high-performance billing frontend application built with React.
+description: |
+  Lago Frontend is a modern React application for managing billing,
+  subscriptions, and customer data. This operator deploys and manages
+  the Lago frontend application on Kubernetes.
+
+  The frontend connects to a Lago API backend and provides a full-featured
+  web interface for billing management, customer portal access, and 
+  administrative functions.
+
+links:
+  documentation: https://docs.getlago.com/
+  website: https://github.com/getlago/lago-front
+  source: https://github.com/theohigham/lago-front-operator
+  issues: https://github.com/theohigham/lago-front-operator/issues
+
+assumes:
+  - juju >= 3.5
+  - k8s-api
+
+requires:
+  nginx-route:
+    interface: nginx-route
+    limit: 1
+    optional: false
+
+containers:
+  lago-frontend:
+    resource: oci-image
+
+resources:
+  oci-image:
+    type: oci-image
+    description: OCI image for Lago Frontend
+    upstream-source: ghcr.io/theohigham/lago-front:latest
+
+config:
+  options:
+    api-url:
+      type: string
+      description: |
+        The URL of the Lago API backend. This is required for the frontend
+        to communicate with the billing system.
+        Example: https://api.lago.example.com
+      default: ""
+    app-env:
+      type: string
+      description: |
+        Application environment setting. Controls various frontend behaviors.
+        Acceptable values: "development", "staging", "production"
+      default: "production"
+    lago-domain:
+      type: string
+      description: |
+        Custom domain for the Lago application. If set, API URL will be
+        automatically constructed as https://{lago-domain}/api
+      default: ""
+    lago-oauth-proxy-url:
+      type: string
+      description: |
+        OAuth proxy URL for authentication integration.
+      default: ""
+    lago-disable-signup:
+      type: boolean
+      description: |
+        Disable user signup functionality in the frontend.
+      default: false
+    lago-disable-pdf-generation:
+      type: boolean
+      description: |
+        Disable PDF generation features in the frontend.
+      default: false
+    nango-public-key:
+      type: string
+      description: |
+        Public key for Nango integration service.
+      default: ""
+    sentry-dsn:
+      type: string
+      description: |
+        Sentry DSN for error tracking and monitoring.
+      default: ""
+
+platforms:
+  ubuntu@22.04:amd64:
