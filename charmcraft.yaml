@@ -84,5 +84,10 @@ config:
         Sentry DSN for error tracking and monitoring.
       default: ""
 
+parts:
+  charm:
+    charm-binary-python-packages:
+      - ops >= 2.10.0
+
 platforms:
   ubuntu@22.04:amd64:
