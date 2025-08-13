@@ -150,16 +150,13 @@ class LagoFrontendOperatorCharm(CharmBase):
         
     def _create_env_config_file(self, env_vars: dict) -> None:
         """Create env-config.js file with runtime environment variables."""
-        # Generate JavaScript that sets window.ENV with our environment variables.
+        # Generate JavaScript that sets window variables directly (not nested under window.ENV).
         env_config_content = "// Runtime environment configuration\n"
-        env_config_content += "window.ENV = {\n"
         
         for key, value in env_vars.items():
             # Escape quotes and convert to JavaScript string.
             escaped_value = str(value).replace('"', '\\"').replace("'", "\\'")
-            env_config_content += f'  {key}: "{escaped_value}",\n'
-        
-        env_config_content += "};\n"
+            env_config_content += f'window.{key} = "{escaped_value}";\n'
         
         # Write the file to the nginx html directory.
         try:
