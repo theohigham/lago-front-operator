@@ -32,7 +32,7 @@ juju deploy ./lago-front-k8s_*.charm \
 
 ### Integrations
 
-The operator requires an nginx-route integration for web traffic:
+The operator optionally supports nginx-route integration for advanced web traffic routing:
 
 ```bash
 juju deploy nginx-ingress-integrator

@@ -74,6 +74,9 @@ class LagoFrontendOperatorCharm(CharmBase):
         # Create pebble layer.
         pebble_layer = self._create_pebble_layer(env_vars)
         
+        # Create env-config.js file for runtime configuration.
+        self._create_env_config_file(env_vars)
+        
         # Add the layer to pebble.
         self._container.add_layer(WORKLOAD_SERVICE, pebble_layer, combine=True)
         
@@ -144,6 +147,30 @@ class LagoFrontendOperatorCharm(CharmBase):
         }
         
         return Layer(pebble_layer)
+        
+    def _create_env_config_file(self, env_vars: dict) -> None:
+        """Create env-config.js file with runtime environment variables."""
+        # Generate JavaScript that sets window.ENV with our environment variables.
+        env_config_content = "// Runtime environment configuration\n"
+        env_config_content += "window.ENV = {\n"
+        
+        for key, value in env_vars.items():
+            # Escape quotes and convert to JavaScript string.
+            escaped_value = str(value).replace('"', '\\"').replace("'", "\\'")
+            env_config_content += f'  {key}: "{escaped_value}",\n'
+        
+        env_config_content += "};\n"
+        
+        # Write the file to the nginx html directory.
+        try:
+            self._container.push(
+                "/usr/share/nginx/html/env-config.js",
+                env_config_content,
+                make_dirs=True
+            )
+            logger.info("Created env-config.js with runtime configuration")
+        except Exception as e:
+            logger.error(f"Failed to create env-config.js: {e}")
 
 
 if __name__ == "__main__":
