@@ -128,7 +128,7 @@ class LagoFrontendOperatorCharm(CharmBase):
                 WORKLOAD_SERVICE: {
                     "override": "replace",
                     "summary": "lago frontend service",
-                    "command": "/bin/bash -c './.env.sh && nginx -g \"daemon off;\"'",
+                    "command": "nginx -g 'daemon off;'",
                     "startup": "enabled",
                     "environment": env_vars,
                 }
